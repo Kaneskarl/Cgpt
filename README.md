@@ -1,6 +1,8 @@
-# Office Attendance
+# Mountain Provinces Mission Office Attendance
 
 An attendance system for a small office: one authorized Android scanning phone, an operator, printed employee QR IDs, and a browser-based administrator dashboard.
+
+The Android app is **MPM Attendance**. The website and scanner use the official Seventh-day Adventist symbol; see [branding assets](docs/BRANDING.md).
 
 The phone and dashboard connect to a FastAPI server backed by PostgreSQL. Daily operation works on the office network without internet. Flutter builds the Android scanner; the dashboard is served by the same backend with no separate Node server or CDN.
 

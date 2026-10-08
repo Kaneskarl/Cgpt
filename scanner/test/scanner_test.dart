@@ -157,7 +157,7 @@ void main() {
   ) async {
     await tester.pumpWidget(const ScannerApp());
     await tester.pumpAndSettle();
-    expect(find.text('Office Attendance'), findsOneWidget);
+    expect(find.text('MPM Attendance'), findsOneWidget);
     await tester.tap(find.text('Sign in'));
     await tester.pumpAndSettle();
     expect(find.text('Enter your username'), findsOneWidget);

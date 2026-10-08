@@ -47,7 +47,7 @@ async def lifespan(app):
     yield
 
 
-app = FastAPI(title='Office Attendance', version='0.1.0', lifespan=lifespan)
+app = FastAPI(title='Mountain Provinces Mission Office Attendance', version='0.1.0', lifespan=lifespan)
 
 
 @app.middleware('http')

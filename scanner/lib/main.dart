@@ -12,7 +12,7 @@ class ScannerApp extends StatelessWidget {
   const ScannerApp({super.key});
   @override
   Widget build(BuildContext context) => MaterialApp(
-    title: 'Office Attendance',
+    title: 'MPM Attendance',
     debugShowCheckedModeBanner: false,
     theme: ThemeData(
       colorScheme: ColorScheme.fromSeed(seedColor: green),
@@ -114,10 +114,15 @@ class _LoginState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Icon(Icons.qr_code_scanner, color: green, size: 64),
+                  Image.asset(
+                    'assets/sda-logo.png',
+                    width: 112,
+                    height: 112,
+                    semanticLabel: 'Seventh-day Adventist logo',
+                  ),
                   const SizedBox(height: 24),
                   const Text(
-                    'Office Attendance',
+                    'MPM Attendance',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700),
                   ),
@@ -518,7 +523,18 @@ class _ScannerState extends State<ScannerScreen> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: const Text('Office scanner'),
+      title: Row(
+        children: [
+          Image.asset(
+            'assets/sda-logo.png',
+            width: 40,
+            height: 40,
+            semanticLabel: 'Seventh-day Adventist logo',
+          ),
+          const SizedBox(width: 8),
+          const Flexible(child: Text('MPM Attendance')),
+        ],
+      ),
       actions: [
         IconButton(
           tooltip: 'Sign out',

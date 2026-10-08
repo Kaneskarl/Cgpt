@@ -56,7 +56,6 @@ async function start(user) {
 }
 async function refreshShared() {
   [staff,office]=await Promise.all([api('/employees'),api('/settings')]);
-  $('#office-name').textContent=office.office_name;
 }
 function showModal(title, body, submit='Save') {
   $('#modal-content').innerHTML=`<div class="modal-header"><h2>${esc(title)}</h2><button class="icon-button" data-close aria-label="Close">×</button></div><form id="modal-form" class="modal-body">${body}<p class="form-error" role="alert"></p><div class="modal-footer"><button type="button" class="secondary" data-close>Cancel</button><button class="primary" type="submit">${esc(submit)}</button></div></form>`;

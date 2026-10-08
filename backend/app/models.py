@@ -116,7 +116,7 @@ class Audit(Base):
 class OfficeSettings(Base):
     __tablename__ = 'office_settings'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, default=1)
-    office_name: Mapped[str] = mapped_column(String(120), default='Office Attendance')
+    office_name: Mapped[str] = mapped_column(String(120), default='Mountain Provinces Mission Office Attendance')
     signatory: Mapped[str] = mapped_column(String(120), default='')
     signatory_title: Mapped[str] = mapped_column(String(120), default='In Charge')
     am_in: Mapped[str] = mapped_column(String(5), default='08:00')
