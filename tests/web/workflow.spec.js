@@ -9,6 +9,9 @@ async function login(page){
 }
 test('admin can manage employees, field duty, corrections, reports, and scanner enrollment',async({page})=>{
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  const frameErrors=[];page.on('console',message=>{
+    if(/refused to (display|frame)|frame-ancestors/i.test(message.text()))frameErrors.push(message.text());
+  });
   await login(page);
   await page.getByRole('link',{name:'Employees',exact:false}).click();
   await page.getByRole('button',{name:'Add employee',exact:false}).click();
@@ -38,7 +41,13 @@ test('admin can manage employees, field duty, corrections, reports, and scanner 
   await expect(page.locator('[data-slot="am_in"]')).toContainText('Field duty');
   await page.getByRole('link',{name:'DTR reports',exact:false}).click();
   await expect(page.getByRole('heading',{name:'Monthly time records',exact:true})).toBeVisible();
+  const previewResponse=page.waitForResponse(response=>response.url().includes('/api/reports/')&&response.url().endsWith('.pdf'));
   await page.getByRole('combobox',{name:'Employee',exact:true}).selectOption({label:'Juan Dela Cruz'});
+  const preview=await previewResponse;
+  expect(preview.status()).toBe(200);
+  expect(preview.headers()['x-frame-options']).toBe('SAMEORIGIN');
+  expect(preview.headers()['content-security-policy']).toBe("frame-ancestors 'self'");
+  await expect(page.getByTitle('Form 48 PDF preview')).toBeVisible();
   await expect(page.getByRole('link',{name:'Open PDF / Print',exact:false})).toBeVisible();
   const url=await page.getByRole('link',{name:'Open PDF / Print',exact:false}).getAttribute('href');
   const pdf=await page.request.get(url);expect(pdf.status()).toBe(200);
@@ -60,6 +69,7 @@ test('admin can manage employees, field duty, corrections, reports, and scanner 
   await expect(page.getByRole('heading',{name:'Today’s attendance'})).toBeVisible();
   await page.screenshot({path:'test-results/dashboard.png',fullPage:true});
   expect(errors).toEqual([]);
+  expect(frameErrors).toEqual([]);
   await page.getByRole('button',{name:'Sign out',exact:true}).click();
   await expect(page.getByRole('heading',{name:'Welcome back'})).toBeVisible();
 });

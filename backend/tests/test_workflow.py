@@ -193,6 +193,9 @@ def test_finalize_reopen_and_pdf(admin_client):
     assert admin_client.post('/api/attendance/correct',json=body).status_code==200
     pdf=admin_client.get(f'/api/reports/{emp["id"]}/2026-01.pdf')
     assert pdf.status_code==200 and pdf.content.startswith(b'%PDF')
+    assert pdf.headers['x-frame-options']=='SAMEORIGIN'
+    assert pdf.headers['content-security-policy']=="frame-ancestors 'self'"
+    assert admin_client.get('/').headers['x-frame-options']=='DENY'
     content=PdfReader(BytesIO(pdf.content)).pages[0].extract_text()
     for text in ('Civil Service Form No. 48','DAILY TIME RECORD','Juan Dela Cruz','January 2026','8:00','Undertime','Verified'):
         assert text in content

@@ -42,6 +42,8 @@ For manual setup, copy `.env.example` to `.env`, set your percent-encoded databa
 
 Open `http://127.0.0.1:8000` on that Windows computer. Log in, add employee profiles/photos, and create an **operator** account under Accounts. Use Print ID to generate each employee's PDF; print at actual size and test the QR before distributing IDs.
 
+If the dashboard works but the DTR preview says `127.0.0.1 refused to connect`, update the server code: earlier builds blocked PDF embedding. Stop the server with Ctrl+C, update `backend\app\main.py` from the repository, restart it with the same start command, and reload the browser with Ctrl+F5. Git users can run `git pull` from the project folder instead of replacing the file manually. This fix does not require database setup or a new Android APK.
+
 For temporary debug phone testing with disposable records:
 
 ```powershell

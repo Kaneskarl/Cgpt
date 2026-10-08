@@ -55,11 +55,15 @@ async def secure_headers(request, call_next):
     response = await call_next(request)
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['Referrer-Policy'] = 'same-origin'
-    response.headers['X-Frame-Options'] = 'DENY'
+    # The admin dashboard embeds authenticated PDFs from this same server.
+    is_pdf = response.headers.get('content-type', '').split(';', 1)[0] == 'application/pdf'
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN' if is_pdf else 'DENY'
+    if is_pdf:
+        response.headers['Content-Security-Policy'] = "frame-ancestors 'self'"
     if request.url.path.startswith('/api'):
         response.headers['Cache-Control'] = 'no-store'
     else:
-        response.headers['Content-Security-Policy'] = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob:; connect-src 'self'; frame-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'"
+        response.headers['Content-Security-Policy'] = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob:; connect-src 'self'; frame-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
     return response
 
 
