@@ -6,6 +6,29 @@ const actions = {am_in:'Morning In', am_out:'Morning Out', pm_in:'Afternoon In',
 let session, staff = [], office = {}, routeVersion = 0, toastTimer;
 const ui = {attendanceDate:today(), attendanceMonth:today().slice(0,7), attendanceView:'day', employee:'', dutyDate:today(), reportMonth:today().slice(0,7), reportEmployee:''};
 
+const sidebarStorageKey = 'mpm.sidebar-collapsed';
+const mobileLayout = window.matchMedia('(max-width:700px)');
+let sidebarPreference = null;
+try {sidebarPreference = localStorage.getItem(sidebarStorageKey);} catch {}
+
+function setSidebarCollapsed(collapsed) {
+  $('#workspace').classList.toggle('sidebar-collapsed',collapsed);
+  const button = $('#sidebar-toggle'), label = collapsed?'Expand sidebar':'Collapse sidebar';
+  button.setAttribute('aria-expanded',String(!collapsed));
+  button.setAttribute('aria-label',label);
+  button.title = label;
+}
+setSidebarCollapsed(sidebarPreference===null?mobileLayout.matches:sidebarPreference==='true');
+$('#sidebar-toggle').addEventListener('click',()=>{
+  const collapsed = !$('#workspace').classList.contains('sidebar-collapsed');
+  sidebarPreference = String(collapsed);
+  try {localStorage.setItem(sidebarStorageKey,sidebarPreference);} catch {}
+  setSidebarCollapsed(collapsed);
+});
+mobileLayout.addEventListener('change',()=>{
+  if(sidebarPreference===null)setSidebarCollapsed(mobileLayout.matches);
+});
+
 function today() { return new Intl.DateTimeFormat('en-CA', {timeZone:'Asia/Manila',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()); }
 function displayDate(value, options = {}) { return new Intl.DateTimeFormat('en-PH', {timeZone:'Asia/Manila',day:'numeric',month:'short',year:'numeric',...options}).format(new Date(value.includes('T') ? value : value+'T12:00:00+08:00')); }
 function displayTime(value) { return new Intl.DateTimeFormat('en-PH', {timeZone:'Asia/Manila',hour:'numeric',minute:'2-digit'}).format(new Date(value)); }
