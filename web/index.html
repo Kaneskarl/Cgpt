@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#113d35">
+  <title>Office Attendance</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script src="/assets/app.js" defer></script>
+</head>
+<body>
+  <main id="login-screen" class="login-layout">
+    <section class="login-story">
+      <div class="brand"><span class="brand-mark">O</span> Office Attendance</div>
+      <div><p class="eyebrow">A CLEAR RECORD OF EVERY WORKDAY</p><h1>Attendance,<br>all in one place.</h1><p class="story-copy">Keep your team’s office attendance, field assignments, and monthly time records organized.</p></div>
+      <div class="story-footer"><span class="status-dot"></span> One office. One trusted scanner.</div>
+    </section>
+    <section class="login-panel">
+      <form id="login-form" class="login-form">
+        <p class="eyebrow">ADMIN WORKSPACE</p><h2>Welcome back</h2><p class="muted">Sign in to manage your team’s attendance.</p>
+        <label>Username<input name="username" autocomplete="username" required maxlength="80"></label>
+        <label>Password<input name="password" type="password" autocomplete="current-password" required maxlength="256"></label>
+        <p id="login-error" class="form-error" role="alert"></p>
+        <button class="primary" type="submit">Sign in <span aria-hidden="true">→</span></button>
+        <p class="login-note">Operators use their own account on the authorized Android phone.</p>
+      </form>
+    </section>
+  </main>
+  <div id="workspace" class="workspace" hidden>
+    <aside class="sidebar">
+      <a class="brand" href="#dashboard"><span class="brand-mark">O</span><span>Office<br><small>Attendance</small></span></a>
+      <p class="nav-caption">WORKSPACE</p>
+      <nav aria-label="Main navigation">
+        <a href="#dashboard" data-nav="dashboard"><span aria-hidden="true">◫</span> Overview</a>
+        <a href="#employees" data-nav="employees"><span aria-hidden="true">♙</span> Employees</a>
+        <a href="#attendance" data-nav="attendance"><span aria-hidden="true">▦</span> Attendance</a>
+        <a href="#field" data-nav="field"><span aria-hidden="true">↗</span> Field duty</a>
+        <a href="#reports" data-nav="reports"><span aria-hidden="true">▤</span> DTR reports</a>
+      </nav>
+      <p class="nav-caption">ADMINISTRATION</p>
+      <nav aria-label="Administration">
+        <a href="#scanner" data-nav="scanner"><span aria-hidden="true">▣</span> Scanner device</a>
+        <a href="#accounts" data-nav="accounts"><span aria-hidden="true">⚿</span> Accounts</a>
+        <a href="#audit" data-nav="audit"><span aria-hidden="true">◷</span> Change history</a>
+        <a href="#settings" data-nav="settings"><span aria-hidden="true">⚙</span> Settings</a>
+      </nav>
+      <div class="sidebar-bottom"><span class="avatar" id="user-initial">A</span><div><strong id="user-name"></strong><small>Administrator</small></div><button id="logout" class="icon-button" title="Sign out" aria-label="Sign out">↪</button></div>
+    </aside>
+    <div class="main-column">
+      <header class="topbar"><span id="office-name">Office Attendance</span><div><span id="connection" class="connection">Connecting…</span><span id="clock-label"></span></div></header>
+      <main id="content" class="content" aria-live="polite"></main>
+      <footer class="page-footer">Office Attendance <span>All attendance times use Philippine time · Asia/Manila</span></footer>
+    </div>
+  </div>
+  <dialog id="modal"><div id="modal-content"></div></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>

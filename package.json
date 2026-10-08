@@ -1,0 +1,9 @@
+{
+  "name": "office-attendance",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {"test:web": "playwright test"},
+  "devDependencies": {
+    "@playwright/test": "^1.64.0"
+  }
+}

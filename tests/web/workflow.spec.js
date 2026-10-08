@@ -1,0 +1,77 @@
+const {test,expect}=require('@playwright/test');
+
+async function login(page){
+  await page.goto('/');
+  await page.getByLabel('Username',{exact:true}).fill('webtester');
+  await page.getByLabel('Password',{exact:true}).fill('Web-test-password-123!');
+  await page.getByRole('button',{name:'Sign in',exact:false}).click();
+  await expect(page.getByRole('heading',{name:'A clear view of your workday.'})).toBeVisible();
+}
+test('admin can manage employees, field duty, corrections, reports, and scanner enrollment',async({page})=>{
+  const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  await login(page);
+  await page.getByRole('link',{name:'Employees',exact:false}).click();
+  await page.getByRole('button',{name:'Add employee',exact:false}).click();
+  await page.getByLabel('Employee number').fill('EMP-001');
+  await page.getByLabel('Full name',{exact:true}).fill('Juan Dela Cruz');
+  await page.getByLabel('Position',{exact:true}).fill('Field Officer');
+  await page.getByRole('button',{name:'Save',exact:true}).click();
+  await expect(page.getByText('Juan Dela Cruz',{exact:true})).toBeVisible();
+  await page.getByRole('link',{name:'Field duty',exact:false}).click();
+  await page.getByRole('button',{name:'Record field duty',exact:false}).click();
+  await page.getByRole('combobox',{name:'Employee',exact:true}).selectOption({label:'Juan Dela Cruz'});
+  await page.getByLabel('Location',{exact:true}).fill('Barangay site');
+  await page.getByLabel('Purpose',{exact:true}).fill('Official inspection');
+  await page.getByLabel('Approval note / reason').fill('Approved by the office supervisor');
+  await page.getByRole('button',{name:'Save',exact:true}).click();
+  await expect(page.getByText('Official inspection',{exact:true})).toBeVisible();
+  await page.getByRole('link',{name:'Attendance',exact:true}).click();
+  await page.locator('[data-slot="am_in"]').click();
+  await page.getByLabel('Actual time (Philippine time)').fill('00:01');
+  await page.getByLabel('Reason for entry or correction').fill('Verified against the manual attendance sheet');
+  await page.getByRole('button',{name:'Save',exact:true}).click();
+  await expect(page.locator('[data-slot="am_in"]')).toContainText('12:01');
+  await page.locator('[data-slot="am_in"]').click();
+  await page.getByRole('button',{name:'Void mistaken entry'}).click();
+  await page.getByLabel('Reason',{exact:true}).fill('Wrong action selected; original preserved');
+  await page.getByRole('button',{name:'Confirm',exact:true}).click();
+  await expect(page.locator('[data-slot="am_in"]')).toContainText('Field duty');
+  await page.getByRole('link',{name:'DTR reports',exact:false}).click();
+  await expect(page.getByRole('heading',{name:'Monthly time records',exact:true})).toBeVisible();
+  await page.getByRole('combobox',{name:'Employee',exact:true}).selectOption({label:'Juan Dela Cruz'});
+  await expect(page.getByRole('link',{name:'Open PDF / Print',exact:false})).toBeVisible();
+  const url=await page.getByRole('link',{name:'Open PDF / Print',exact:false}).getAttribute('href');
+  const pdf=await page.request.get(url);expect(pdf.status()).toBe(200);
+  expect((await pdf.body()).subarray(0,4).toString()).toBe('%PDF');
+  await page.getByRole('link',{name:'Scanner device',exact:false}).click();
+  await page.getByRole('button',{name:'Generate enrollment code'}).click();
+  await expect(page.locator('.code-box')).toBeVisible();
+  await page.getByRole('link',{name:'Accounts',exact:false}).click();
+  await page.getByRole('button',{name:'Create account',exact:false}).click();
+  await page.getByLabel('Full name',{exact:true}).fill('Scanning Operator');
+  await page.getByRole('dialog').getByLabel('Username',{exact:true}).fill('scanner.operator');
+  await page.getByRole('dialog').getByLabel('Password',{exact:true}).fill('Operator-password-123!');
+  await page.getByRole('button',{name:'Save',exact:true}).click();
+  await expect(page.getByText('scanner.operator',{exact:true})).toBeVisible();
+  await page.getByRole('link',{name:'Change history',exact:false}).click();
+  await expect(page.getByRole('heading',{name:'Change history',exact:true})).toBeVisible();
+  await expect(page.getByRole('cell',{name:/Wrong action selected; original preserved/})).toBeVisible();
+  await page.getByRole('link',{name:'Overview',exact:false}).click();
+  await expect(page.getByRole('heading',{name:'Today’s attendance'})).toBeVisible();
+  await page.screenshot({path:'test-results/dashboard.png',fullPage:true});
+  expect(errors).toEqual([]);
+  await page.getByRole('button',{name:'Sign out',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'Welcome back'})).toBeVisible();
+});
+
+test('mobile layout fits the screen and rejects invalid login',async({page})=>{
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/');
+  await page.getByLabel('Username',{exact:true}).fill('webtester');
+  await page.getByLabel('Password',{exact:true}).fill('incorrect');
+  await page.getByRole('button',{name:'Sign in',exact:false}).click();
+  await expect(page.getByRole('alert')).toContainText('Invalid username or password');
+  await login(page);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
+  await page.screenshot({path:'test-results/mobile-dashboard.png',fullPage:true});
+});

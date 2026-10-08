@@ -1,0 +1,10 @@
+.git
+.env
+.venv
+node_modules
+scanner
+backups
+test-results
+**/__pycache__
+backend/tests
+*.db
